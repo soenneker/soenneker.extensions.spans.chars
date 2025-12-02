@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
+using Soenneker.Extensions.Spans.Bytes;
 
 namespace Soenneker.Extensions.Spans.Chars;
 
@@ -18,8 +19,9 @@ public static class SpanCharExtension
     /// operation is performed in a way that is intended to prevent the compiler or runtime from optimizing away the
     /// memory clearing.</remarks>
     /// <param name="span">The span of characters to be securely cleared. The contents of this span will be overwritten with zeros.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void SecureZero(this Span<char> span)
     {
-        CryptographicOperations.ZeroMemory(MemoryMarshal.AsBytes(span));
+        MemoryMarshal.AsBytes(span).SecureZero();
     }
 }
