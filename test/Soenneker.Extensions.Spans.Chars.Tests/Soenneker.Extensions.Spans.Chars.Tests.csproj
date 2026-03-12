@@ -15,7 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Soenneker.Extensions.Spans.Chars.csproj" />
+        <ProjectReference Include="..\..\src\Soenneker.Extensions.Spans.Chars\Soenneker.Extensions.Spans.Chars.csproj" />
     </ItemGroup>
 
     <ItemGroup>
