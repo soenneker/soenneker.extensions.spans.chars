@@ -38,7 +38,7 @@ public static class SpanCharExtension
     /// </param>
     /// <remarks>
     /// This method does not perform bounds checking or validation for performance reasons.
-    /// Passing an incorrect <paramref name="digits"/> value or a destination span that is too small will result in incorrect behavior.
+    /// Passing an incorrect <paramref name="digits"/> value may leave characters unwritten or cause indexing to fail.
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void WriteInt64(this Span<char> destination, long value, int digits)
@@ -73,9 +73,9 @@ public static class SpanCharExtension
     /// The exact number of decimal digits in <paramref name="value"/>.
     /// </param>
     /// <remarks>
-    /// Digits are written in reverse order into the destination span, avoiding allocations and formatting overhead.
+    /// The method fills the destination from right to left, producing the ordinary left-to-right decimal representation without allocations.
     /// This method assumes <paramref name="value"/> is non-negative and does not perform validation for performance reasons.
-    /// Passing a negative value, an incorrect <paramref name="digits"/> value, or a destination span that is too small will result in incorrect behavior.
+    /// Passing a negative value or an incorrect <paramref name="digits"/> value may produce invalid output or cause indexing to fail.
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void WritePositiveInt64(this Span<char> destination, long value, int digits)

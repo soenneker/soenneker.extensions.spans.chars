@@ -4,7 +4,7 @@
 [![](https://img.shields.io/github/actions/workflow/status/soenneker/soenneker.extensions.spans.chars/codeql.yml?label=CodeQL&style=for-the-badge)](https://github.com/soenneker/soenneker.extensions.spans.chars/actions/workflows/codeql.yml)
 
 # ![](https://user-images.githubusercontent.com/4441470/224455560-91ed3ee7-f510-4041-a8d2-3fc093025112.png) Soenneker.Extensions.Spans.Chars
-Various helpful character span extension methods.
+Allocation-free helpers for clearing character buffers and writing pre-sized `long` values.
 
 ## Installation
 
@@ -12,17 +12,33 @@ Various helpful character span extension methods.
 dotnet add package Soenneker.Extensions.Spans.Chars
 ```
 
-## Quick start
+## Clear sensitive characters
 
 ```csharp
 using Soenneker.Extensions.Spans.Chars;
 
-// Given an existing Span<char> named span:
-span.SecureZero();
+Span<char> password = stackalloc char[64];
+// Fill and use password...
+password.SecureZero();
 ```
 
-## Common operations
+`SecureZero()` clears the bytes backing the entire span through `CryptographicOperations.ZeroMemory`, so the write cannot be optimized away. It mutates only the supplied span; copies of the secret remain the caller's responsibility.
 
-- `SecureZero()` - Overwrites the contents of the specified character span with zeros in a manner designed to prevent sensitive data from lingering in memory.
-- `WriteInt64()` - Writes the decimal representation of the specified `long` value into the provided `SpanChar`. This method does not perform bounds checking or validation for performance reasons.
-- `WritePositiveInt64()` - Writes the decimal representation of a non-negative `long` value into the provided `SpanChar`. Digits are written in reverse order into the destination span, avoiding allocations and formatting overhead.
+## Write an integer into a prepared buffer
+
+```csharp
+using Soenneker.Extensions.Spans.Chars;
+
+const long value = -12345;
+Span<char> buffer = stackalloc char[6];
+
+buffer.WriteInt64(value, digits: 6);
+string text = new(buffer); // "-12345"
+```
+
+`WriteInt64()` and `WritePositiveInt64()` are low-level formatting helpers for code that already knows the exact output length. They avoid allocations, but intentionally do not calculate or validate `digits`.
+
+- `WriteInt64()` accepts the full `long` range. `digits` includes the minus sign.
+- `WritePositiveInt64()` requires a non-negative value. `digits` is the number of decimal digits.
+- The destination must contain at least `digits` characters.
+- An incorrect digit count can leave characters unwritten or cause indexing to fail. Use `long.TryFormat()` when the output length is not already known.
