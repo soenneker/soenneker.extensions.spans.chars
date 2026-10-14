@@ -45,6 +45,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Soenneker.Extensions.Spans.Bytes" Version="4.0.28" />
+        <PackageReference Include="Soenneker.Extensions.Spans.Bytes" Version="4.0.33" />
     </ItemGroup>
 </Project>
